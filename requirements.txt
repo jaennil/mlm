@@ -1,7 +1,19 @@
-loguru
 pip
 python-dotenv
 ruff
 tqdm
+loguru
 typer
--e .
+jupyterlab
+numpy
+torch
+pandas
+pillow
+albumentations
+scikit-learn
+timm
+seaborn
+onnxscript
+onnxruntime
+gradio
+ipywidgets
