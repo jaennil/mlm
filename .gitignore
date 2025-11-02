@@ -1,3 +1,7 @@
+*.onnx.data
+*.pth
+code
+
 # Data
 /data/
 
