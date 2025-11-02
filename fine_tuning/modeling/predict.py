@@ -1,30 +1,18 @@
-from pathlib import Path
+import torch
+from ..dataset import val_transform
+from timm import create_model
+from ..config import ConvNextConfig, BEST_MODEL_PTH, CLASS_NAMES
 
-from loguru import logger
-from tqdm import tqdm
-import typer
+def predict_single(image_path: str, model_path: str = BEST_MODEL_PTH):
+    config = ConvNextConfig()
+    model = create_model(config.model_name, pretrained=False, num_classes=config.num_classes)
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
 
-from fine_tuning.config import MODELS_DIR, PROCESSED_DATA_DIR
-
-app = typer.Typer()
-
-
-@app.command()
-def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
-    features_path: Path = PROCESSED_DATA_DIR / "test_features.csv",
-    model_path: Path = MODELS_DIR / "model.pkl",
-    predictions_path: Path = PROCESSED_DATA_DIR / "test_predictions.csv",
-    # -----------------------------------------
-):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Performing inference for model...")
-    for i in tqdm(range(10), total=10):
-        if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Inference complete.")
-    # -----------------------------------------
-
-
-if __name__ == "__main__":
-    app()
+    from PIL import Image
+    import numpy as np
+    image = np.array(Image.open(image_path).convert("RGB"))
+    transformed = val_transform(image=image)["image"].unsqueeze(0)
+    with torch.no_grad():
+        pred = model(transformed).argmax(1).item()
+    return CLASS_NAMES[pred]

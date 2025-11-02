@@ -63,6 +63,22 @@ create_environment:
 data: requirements
 	$(PYTHON_INTERPRETER) fine_tuning/dataset.py
 
+.PHONY: split_data
+split_data: requirements
+	$(PYTHON_INTERPRETER) -c "from fine_tuning.dataset import create_splits; create_splits()"
+
+.PHONY: train
+train: requirements
+	$(PYTHON_INTERPRETER) -m from fine_tuning.modeling.train --config fine_tuning.config:BestConfig
+
+.PHONY: app
+app: requirements
+	cd app && $(PYTHON_INTERPRETER) app.py
+
+.PHONY: notebook
+notebook: requirements
+	jupyter lab notebooks/
+
 
 #################################################################################
 # Self Documenting Commands                                                     #
