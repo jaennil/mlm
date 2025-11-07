@@ -45,6 +45,11 @@ def train_model(config: TrainingConfig):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config.lr)
 
+    if config.scheduler == "StepLR":
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=config.scheduler_step, gamma=config.scheduler_gamma)
+    else:
+        scheduler = None
+
     best_acc = 0
     train_losses = []
     val_accuracies = []
@@ -64,10 +69,15 @@ def train_model(config: TrainingConfig):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            if scheduler:
+                scheduler.step()
+                current_lr = scheduler.get_last_lr()[0]
+                logger.info(f"learning rate updated to: {current_lr:.2e}")
             epoch_loss += loss.item()
 
         avg_loss = epoch_loss / len(train_loader)
         train_losses.append(avg_loss)
+        final_loss = avg_loss
 
         model.eval()
         preds, labels = [], []
@@ -85,6 +95,8 @@ def train_model(config: TrainingConfig):
             best_acc = acc
             torch.save(model.state_dict(), BEST_MODEL_PTH)
             logger.info(f"new best model saved with accuracy: {best_acc:.4f}")
+
+
 
     logger.info("geterating confusion matrix...")
     cm = confusion_matrix(labels, preds)
@@ -133,6 +145,7 @@ def train_model(config: TrainingConfig):
 
     return {
         "best_accuracy": best_acc,
+        "final_loss": final_loss,
         "model_path": BEST_MODEL_PTH,
         "onnx_path": ONNX_PATH,
         "confusion_matrix_path": CONFUSION_MATRIX,

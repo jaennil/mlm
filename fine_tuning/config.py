@@ -47,7 +47,7 @@ class TrainingConfig:
     unfreeze_epoch: int = 5
     seed: int = 42
     optimizer: str = "Adam"
-    scheduler: str = "StepLR"
+    scheduler: str = ""
 
 @dataclass
 class ResNet34Config(TrainingConfig):
@@ -61,9 +61,12 @@ class ResNet34Config(TrainingConfig):
 class ConvNextConfig(TrainingConfig):
     model_name: str = "convnext_tiny"
     batch_size: int = 8
-    lr: float = 5e-4
+    lr: float = 1e-3
     epochs: int = 15
     unfreeze_epoch: int = 7
+    scheduler: str = "StepLR"
+    scheduler_step: int = 5
+    scheduler_gamma: float = 0.1
 
 @dataclass
 class BestConfig(ConvNextConfig):
