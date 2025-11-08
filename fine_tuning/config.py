@@ -48,17 +48,22 @@ class TrainingConfig:
     seed: int = 42
     optimizer: str = "Adam"
     scheduler: str = ""
+    scheduler_step: int = 5
+    scheduler_gamma: float = 0.1
 
 @dataclass
 class ResNet34Config(TrainingConfig):
+    """ResNet34 - без scheduler"""
     model_name: str = "resnet34"
     batch_size: int = 16
     lr: float = 1e-3
     epochs: int = 12
     unfreeze_epoch: int = 6
+    scheduler: str = ""
 
 @dataclass
 class ConvNextConfig(TrainingConfig):
+    """ConvNeXt - со scheduler для финального обучения"""
     model_name: str = "convnext_tiny"
     batch_size: int = 8
     lr: float = 1e-3
@@ -67,11 +72,6 @@ class ConvNextConfig(TrainingConfig):
     scheduler: str = "StepLR"
     scheduler_step: int = 5
     scheduler_gamma: float = 0.1
-
-@dataclass
-class BestConfig(ConvNextConfig):
-    """Best configuration based on experiments"""
-    pass
 
 def seed_everything(seed: int = SEED):
     random.seed(seed)
