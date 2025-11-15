@@ -69,7 +69,7 @@ split_data: requirements
 
 .PHONY: train
 train: requirements
-	$(PYTHON_INTERPRETER) -m from fine_tuning.modeling.train --config fine_tuning.config:BestConfig
+	$(PYTHON_INTERPRETER) -m fine_tuning.modeling.train --config fine_tuning.config:ConvNextConfig
 
 .PHONY: app
 app: requirements

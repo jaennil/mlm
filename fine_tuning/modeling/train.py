@@ -218,3 +218,19 @@ def train_model(config: TrainingConfig) -> dict:
         "confusion_matrix_path": CONFUSION_MATRIX,
         "learning_curves_path": LEARNING_CURVES
     }
+
+if __name__ == "__main__":
+    import argparse
+    from ..config import ConvNextConfig
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, default="fine_tuning.config:ConvNextConfig")
+    args = parser.parse_args()
+    
+    module_name, class_name = args.config.split(":")
+    import importlib
+    module = importlib.import_module(module_name)
+    config_class = getattr(module, class_name)
+    config = config_class()
+    
+    train_model(config)

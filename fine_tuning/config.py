@@ -39,7 +39,7 @@ SEED = 42
 
 @dataclass
 class TrainingConfig:
-    model_name: str = "resnet18"
+    model_name: str = "resnet34"
     batch_size: int = 16
     lr: float = 1e-3
     epochs: int = 10
@@ -53,7 +53,6 @@ class TrainingConfig:
 
 @dataclass
 class ResNet34Config(TrainingConfig):
-    """ResNet34 - без scheduler"""
     model_name: str = "resnet34"
     batch_size: int = 16
     lr: float = 1e-3
@@ -63,7 +62,6 @@ class ResNet34Config(TrainingConfig):
 
 @dataclass
 class ConvNextConfig(TrainingConfig):
-    """ConvNeXt - со scheduler для финального обучения"""
     model_name: str = "convnext_tiny"
     batch_size: int = 8
     lr: float = 1e-3
